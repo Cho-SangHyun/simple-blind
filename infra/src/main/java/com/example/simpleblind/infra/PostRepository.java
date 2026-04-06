@@ -32,13 +32,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             FROM post p
             JOIN users u    ON p.user_id     = u.id
             JOIN category c ON p.category_id = c.id
-            LEFT JOIN (
+            JOIN (
                 SELECT post_id, COUNT(*) AS like_count
                 FROM post_like
                 WHERE created_at >= :start AND created_at < :end
                 GROUP BY post_id
             ) l ON p.id = l.post_id
-            LEFT JOIN (
+            JOIN (
                 SELECT post_id, COUNT(*) AS view_count
                 FROM post_view_log
                 WHERE viewed_at >= :start AND viewed_at < :end
