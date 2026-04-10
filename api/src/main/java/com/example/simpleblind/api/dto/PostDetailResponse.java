@@ -1,6 +1,6 @@
 package com.example.simpleblind.api.dto;
 
-import com.example.simpleblind.domain.Post;
+import com.example.simpleblind.application.dto.PostDetailResult;
 
 import java.time.LocalDateTime;
 
@@ -16,18 +16,18 @@ public record PostDetailResponse(
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
-    public static PostDetailResponse from(Post post, boolean likedByCurrentUser) {
+    public static PostDetailResponse from(PostDetailResult result, boolean likedByCurrentUser) {
         return new PostDetailResponse(
-                post.getId(),
-                post.getTitle(),
-                post.getContent(),
-                post.getUser().getNickname(),
-                post.getCategory().getName(),
-                post.getViewCount(),
-                post.getLikeCount(),
+                result.id(),
+                result.title(),
+                result.content(),
+                result.authorNickname(),
+                result.categoryName(),
+                result.viewCount(),
+                result.likeCount(),
                 likedByCurrentUser,
-                post.getCreatedAt(),
-                post.getUpdatedAt()
+                result.createdAt(),
+                result.updatedAt()
         );
     }
 }

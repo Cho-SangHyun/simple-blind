@@ -1,4 +1,4 @@
-package com.example.simpleblind.api;
+package com.example.simpleblind.application;
 
 import com.example.simpleblind.domain.*;
 import com.example.simpleblind.infra.*;

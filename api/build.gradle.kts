@@ -3,12 +3,11 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
-    implementation(project(":domain"))
-    implementation(project(":infra"))
     implementation(project(":application"))
+    implementation(project(":common"))
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.data:spring-data-commons")
+    implementation("org.springframework:spring-tx")
     runtimeOnly("com.mysql:mysql-connector-j")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")

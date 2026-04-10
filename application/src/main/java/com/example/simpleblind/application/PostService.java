@@ -1,5 +1,9 @@
 package com.example.simpleblind.application;
 
+import com.example.simpleblind.application.dto.LikeResult;
+import com.example.simpleblind.application.dto.PopularPostResult;
+import com.example.simpleblind.application.dto.PostDetailResult;
+import com.example.simpleblind.application.dto.PostSummaryResult;
 import com.example.simpleblind.common.exception.EntityNotFoundException;
 import com.example.simpleblind.domain.Category;
 import com.example.simpleblind.domain.Post;
@@ -7,7 +11,6 @@ import com.example.simpleblind.domain.PostLike;
 import com.example.simpleblind.domain.PostViewLog;
 import com.example.simpleblind.domain.User;
 import com.example.simpleblind.infra.CategoryRepository;
-import com.example.simpleblind.infra.PopularPostProjection;
 import com.example.simpleblind.infra.PostLikeRepository;
 import com.example.simpleblind.infra.PostRepository;
 import com.example.simpleblind.infra.PostViewLogRepository;
@@ -44,12 +47,13 @@ public class PostService {
         this.categoryRepository = categoryRepository;
     }
 
-    public Page<Post> findByCategoryId(Long categoryId, Pageable pageable) {
-        return postRepository.findByCategoryIdWithUser(categoryId, pageable);
+    public Page<PostSummaryResult> findByCategoryId(Long categoryId, Pageable pageable) {
+        return postRepository.findByCategoryIdWithUser(categoryId, pageable)
+                .map(PostSummaryResult::from);
     }
 
     @Transactional
-    public Post findById(Long postId, Long userId) {
+    public PostDetailResult findById(Long postId, Long userId) {
         Post post = postRepository.findByIdWithAssociations(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found: " + postId));
 
@@ -60,7 +64,7 @@ public class PostService {
                 : null;
         postViewLogRepository.save(new PostViewLog(post, user));
 
-        return post;
+        return PostDetailResult.from(post);
     }
 
     public boolean isLikedByUser(Long postId, Long userId) {
@@ -69,13 +73,13 @@ public class PostService {
     }
 
     @Transactional
-    public Post create(Long userId, Long categoryId, String title, String content) {
+    public PostDetailResult create(Long userId, Long categoryId, String title, String content) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + userId));
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found: " + categoryId));
 
-        return postRepository.save(new Post(user, category, title, content));
+        return PostDetailResult.from(postRepository.save(new Post(user, category, title, content)));
     }
 
     @Transactional
@@ -98,11 +102,11 @@ public class PostService {
         }
     }
 
-    public List<PopularPostProjection> findPopularPosts() {
+    public List<PopularPostResult> findPopularPosts() {
         LocalDateTime start = LocalDate.now().minusDays(1).atStartOfDay();
         LocalDateTime end = LocalDate.now().atStartOfDay();
-        return postRepository.findPopularPosts(start, end);
+        return postRepository.findPopularPosts(start, end).stream()
+                .map(PopularPostResult::from)
+                .toList();
     }
-
-    public record LikeResult(boolean liked, Long totalLikes) {}
 }

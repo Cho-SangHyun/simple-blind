@@ -1,7 +1,7 @@
 package com.example.simpleblind.application;
 
+import com.example.simpleblind.application.dto.CategoryResult;
 import com.example.simpleblind.common.exception.EntityNotFoundException;
-import com.example.simpleblind.domain.Category;
 import com.example.simpleblind.infra.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +18,15 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<Category> findAll() {
-        return categoryRepository.findAll();
+    public List<CategoryResult> findAll() {
+        return categoryRepository.findAll().stream()
+                .map(CategoryResult::from)
+                .toList();
     }
 
-    public Category findById(Long id) {
+    public CategoryResult findById(Long id) {
         return categoryRepository.findById(id)
+                .map(CategoryResult::from)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found: " + id));
     }
 }

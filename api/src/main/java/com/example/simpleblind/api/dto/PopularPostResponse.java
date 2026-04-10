@@ -1,6 +1,6 @@
 package com.example.simpleblind.api.dto;
 
-import com.example.simpleblind.infra.PopularPostProjection;
+import com.example.simpleblind.application.dto.PopularPostResult;
 
 import java.time.LocalDateTime;
 
@@ -14,16 +14,16 @@ public record PopularPostResponse(
         Long score,
         LocalDateTime createdAt
 ) {
-    public static PopularPostResponse from(PopularPostProjection projection) {
+    public static PopularPostResponse from(PopularPostResult result) {
         return new PopularPostResponse(
-                projection.getPostId(),
-                projection.getTitle(),
-                projection.getAuthorNickname(),
-                projection.getCategoryName(),
-                projection.getLikeCount(),
-                projection.getViewCount(),
-                projection.getScore(),
-                projection.getCreatedAt()
+                result.postId(),
+                result.title(),
+                result.authorNickname(),
+                result.categoryName(),
+                result.likeCount(),
+                result.viewCount(),
+                result.score(),
+                result.createdAt()
         );
     }
 }
