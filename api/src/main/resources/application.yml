@@ -14,5 +14,11 @@ spring:
     show-sql: true
     open-in-view: false
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: runPopularPostBatch
+
 server:
   port: 8080

@@ -20,8 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,17 +32,20 @@ public class PostService {
     private final PostViewLogRepository postViewLogRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final PopularPostSnapshotService popularPostSnapshotService;
 
     public PostService(PostRepository postRepository,
                        PostLikeRepository postLikeRepository,
                        PostViewLogRepository postViewLogRepository,
                        UserRepository userRepository,
-                       CategoryRepository categoryRepository) {
+                       CategoryRepository categoryRepository,
+                       PopularPostSnapshotService popularPostSnapshotService) {
         this.postRepository = postRepository;
         this.postLikeRepository = postLikeRepository;
         this.postViewLogRepository = postViewLogRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
+        this.popularPostSnapshotService = popularPostSnapshotService;
     }
 
     public Page<PostSummaryResult> findByCategoryId(Long categoryId, Pageable pageable) {
@@ -103,10 +104,6 @@ public class PostService {
     }
 
     public List<PopularPostResult> findPopularPosts() {
-        LocalDateTime start = LocalDate.now().minusDays(1).atStartOfDay();
-        LocalDateTime end = LocalDate.now().atStartOfDay();
-        return postRepository.findPopularPosts(start, end).stream()
-                .map(PopularPostResult::from)
-                .toList();
+        return popularPostSnapshotService.findLatest();
     }
 }

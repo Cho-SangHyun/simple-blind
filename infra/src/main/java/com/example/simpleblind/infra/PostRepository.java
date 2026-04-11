@@ -23,7 +23,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = """
             SELECT p.id        AS postId,
                    p.title     AS title,
+                   u.id        AS authorId,
                    u.nickname  AS authorNickname,
+                   c.id        AS categoryId,
                    c.name      AS categoryName,
                    COALESCE(l.like_count, 0)  AS likeCount,
                    COALESCE(v.view_count, 0)  AS viewCount,
